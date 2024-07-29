@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import './list.css'
 
 
-function ListComponent() {
+function List() {
   const [list, setList] = useState<string[]>([])
   const [value, setValue] = useState<string>('')
 
@@ -59,4 +59,4 @@ function ListComponent() {
   )
 }
 
-export default ListComponent
+export default List
