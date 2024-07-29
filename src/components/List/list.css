@@ -6,3 +6,7 @@
   .tachado{
     text-decoration: line-through;
   }
+
+.list{
+  max-width: 500px;
+}
