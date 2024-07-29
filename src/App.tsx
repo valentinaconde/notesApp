@@ -1,12 +1,14 @@
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.css';
-import ListComponent from './components/listComponent/list-component'
+import Header from './components/Header';
+import List from './components/List';
 
 function App() {
-  
+
   return (
     <>
-     <ListComponent />
+      <Header />
+      <List />
     </>
   )
 }
