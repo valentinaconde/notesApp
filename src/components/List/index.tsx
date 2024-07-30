@@ -3,6 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import './list.css'
 import Swal from 'sweetalert2'
+import EmptyData from '../EmptyData';
 
 
 function List() {
@@ -68,7 +69,9 @@ function List() {
         <button className='btn btn-success ms-2'>SUBMIT</button>
         <button className='btn btn-danger ms-2' onClick={handleDeleteAll}>CLEAR</button>
       </form>
-
+      {
+        list.length === 0 && <EmptyData message='No hay elementos en la lista' />
+      }
       {
         list.map((item, index) => (
           <div className='text-dark bg-light list ms-3 mt-2 ps-2 d-flex justify-content-between' key={index} id={`${index}`} >
