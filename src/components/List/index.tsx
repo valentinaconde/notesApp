@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import './list.css'
-
+import EmptyData from '../EmptyData';
 
 function List() {
   const [list, setList] = useState<string[]>([])
@@ -43,7 +43,9 @@ function List() {
         <input className='form-control' type="text" value={value} onChange={handleChange}></input>
         <button className='btn btn-success ms-2'>SUBMIT</button>
       </form>
-
+      {
+        list.length === 0 && <EmptyData message='No hay elementos en la lista' />
+      }
       {
         list.map((item, index) => (
           <div className='text-dark bg-light list ms-3 mt-2 ps-2 d-flex justify-content-between' key={index} id={`${index}`} >
