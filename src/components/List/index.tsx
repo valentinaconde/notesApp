@@ -3,6 +3,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import './list.css'
 import EmptyData from '../EmptyData';
+import{ ConfirmAlert,  DeletedAlert } from '../../services/SwalService';
+import { Delete } from '@mui/icons-material';
 
 function List() {
   const [list, setList] = useState<string[]>([])
@@ -37,11 +39,23 @@ function List() {
     document.getElementById(index)?.classList.add('tachado')
   }
 
+  const handleDeleteAll = () => {
+    ConfirmAlert().then((result) => {
+     if (result.isConfirmed) {
+       setList([])
+       localStorage.removeItem('list')
+       DeletedAlert()
+     }
+    })
+    
+
+  }
   return (
     <>
       <form className='d-flex mb-3 list mt-5 ms-3' onSubmit={handleSubmit}>
         <input className='form-control' type="text" value={value} onChange={handleChange}></input>
         <button className='btn btn-success ms-2'>SUBMIT</button>
+        <button className='btn btn-danger ms-2' onClick={handleDeleteAll}>CLEAR</button>
       </form>
       {
         list.length === 0 && <EmptyData message='No hay elementos en la lista' />
