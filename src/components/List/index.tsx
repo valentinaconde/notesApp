@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import './list.css'
-import Swal from 'sweetalert2'
 import EmptyData from '../EmptyData';
-
+import{ ConfirmAlert,  DeletedAlert } from '../../services/SwalService';
+import { Delete } from '@mui/icons-material';
 
 function List() {
   const [list, setList] = useState<string[]>([])
@@ -40,25 +40,13 @@ function List() {
   }
 
   const handleDeleteAll = () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem('list')
-        setList([])
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success"
-        });
-      }
-    });
+    ConfirmAlert().then((result) => {
+     if (result.isConfirmed) {
+       setList([])
+       localStorage.removeItem('list')
+       DeletedAlert()
+     }
+    })
     
 
   }
