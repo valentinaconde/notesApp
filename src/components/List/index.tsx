@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import './list.css'
+import Swal from 'sweetalert2'
 
 
 function List() {
@@ -37,11 +38,35 @@ function List() {
     document.getElementById(index)?.classList.add('tachado')
   }
 
+  const handleDeleteAll = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem('list')
+        setList([])
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+      }
+    });
+    
+
+  }
   return (
     <>
       <form className='d-flex mb-3 list mt-5 ms-3' onSubmit={handleSubmit}>
         <input className='form-control' type="text" value={value} onChange={handleChange}></input>
         <button className='btn btn-success ms-2'>SUBMIT</button>
+        <button className='btn btn-danger ms-2' onClick={handleDeleteAll}>CLEAR</button>
       </form>
 
       {
