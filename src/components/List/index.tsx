@@ -104,6 +104,21 @@ function List() {
 
   }
 
+  const handleComplete = (index: number) => {
+    const newList = notes.map((item, i) => {
+      if (i === index) {
+        if(item.title.includes('(Completed)')) return item
+        return {
+          ...item,
+          title: item.title + ' (Completed)'
+        }
+      }
+      return item
+    })
+    setNotes(newList)
+    localStorage.setItem('notes', JSON.stringify(newList))
+  }
+
 
   return (
     <div className='d-flex flex-column align-items-center'>
@@ -137,24 +152,10 @@ function List() {
             <CardActions className='bg-light card-styles d-flex justify-content-center'>
               <DeleteIcon className="icon ms-3 me-2" onClick={() => handleDelete(index)} />
               <EditIcon className='icon' onClick={() => handleEdit(item.id)} />
+              <CloseIcon className='icon' onClick={() => handleComplete(index)} />
             </CardActions>
 
           </div>
-
-
-
-
-
-
-
-
-          // <div className='text-dark bg-light list mx-3 mt-2 px-2 d-flex justify-content-between' key={item.id} id={item.id} >
-          //   {item.title}
-          //   <div>
-          //     <DeleteIcon className="icon ms-3 me-2" onClick={() => handleDelete(index)} />
-          //     <CloseIcon className='icon' onClick={() => handleTacharEnIngles(item.id)} />
-          //   </div>
-          // </div>
         ))
       }
     </div>
