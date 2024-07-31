@@ -27,3 +27,16 @@ export function ErrorAlert(title: string, text: string) {
         icon: "error"
     });
 }
+
+export function EditAlert (title: string) {
+    return Swal.fire({
+        title,
+        input: 'text',
+        showCancelButton: true,
+        confirmButtonText: 'Edit',
+        showLoaderOnConfirm: true,
+        preConfirm: (newText) => {
+            return {newText}
+        }
+    })
+}
