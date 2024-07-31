@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
 import './list.css'
 import EmptyData from '../EmptyData';
 import{ ConfirmAlert,  WarningAlert } from '../../services/SwalService';
@@ -57,15 +58,17 @@ function List() {
     <>
       <form className='d-flex mb-3 list mt-5 ms-3' onSubmit={handleSubmit}>
         <input className='form-control' type="text" value={value} onChange={handleChange}></input>
-        <button className='btn btn-success ms-2'>SUBMIT</button>
-        <button className='btn btn-danger ms-2' onClick={handleDeleteAll}>CLEAR</button>
+        <button className='btn btn-success ms-2 d-none d-md-block'>SUBMIT</button>
+        <button className='btn btn-success ms-2 d-md-none d-block'><CheckIcon/></button>
+        <button className='btn btn-danger mx-2 d-none d-md-block' onClick={handleDeleteAll}>CLEAR</button>
+        <button className='btn btn-danger mx-2 d-md-none d-block' onClick={handleDeleteAll}><CloseIcon/></button>
       </form>
       {
         list.length === 0 && <EmptyData message='No hay elementos en la lista' />
       }
       {
         list.map((item, index) => (
-          <div className='text-dark bg-light list ms-3 mt-2 ps-2 d-flex justify-content-between' key={index} id={`${index}`} >
+          <div className='text-dark bg-light list mx-3 mt-2 px-2 d-flex justify-content-between' key={index} id={`${index}`} >
             {item}
             <div>
               <DeleteIcon className="icon ms-3 me-2" onClick={() => handleDelete(index)} />
