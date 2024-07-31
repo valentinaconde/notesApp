@@ -1,42 +1,50 @@
-import { useEffect, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import './list.css'
 import EmptyData from '../EmptyData';
 import{ ConfirmAlert,  WarningAlert } from '../../services/SwalService';
+import { Note } from '../../types/Note';
+import { v4 as uuidv4 } from 'uuid';
 
 function List() {
-  const [list, setList] = useState<string[]>([])
+  const [notes, setNotes] = useState<Note[]>([])
   const [value, setValue] = useState<string>('')
 
   useEffect(() => {
     const list = localStorage.getItem('list')
     if (list) {
-      setList(JSON.parse(list))
+      setNotes(JSON.parse(list))
     }
   }, [])
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event?.preventDefault()
     if (!value) return
-    setList([...list, value])
-    localStorage.setItem('list', JSON.stringify([...list, value]))
+
+    const note = {
+      id: uuidv4(),
+      title: value
+    }
+
+    setNotes([...notes, note])
+    localStorage.setItem('notes', JSON.stringify([...notes, note]))
     setValue('')
   }
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value)
   }
 
-  const handleDelete = (index: any) => {
-    const newList = list.filter((item, i) => i !== index)
-    setList(newList)
+  const handleDelete = (index: number) => {
+    const newList = notes.filter((item, i) => i !== index)
+    setNotes(newList)
     localStorage.setItem('list', JSON.stringify(newList))
   }
 
-  const handleTacharEnIngles = (index: any) => {
-    document.getElementById(index)?.classList.add('tachado')
+  const handleTacharEnIngles = (id: string) => {
+    document.getElementById(id)?.classList.add('tachado')
   }
 
   const handleDeleteAll = () => {
@@ -47,7 +55,7 @@ function List() {
 
     WarningAlert(warningTitle,warningText).then((result) => {
      if (result.isConfirmed) {
-       setList([])
+      setNotes([])
        localStorage.removeItem('list')
        ConfirmAlert(confirmTitle, confirmText)
      }
@@ -64,15 +72,15 @@ function List() {
         <button className='btn btn-danger mx-2 d-md-none d-block' onClick={handleDeleteAll}><CloseIcon/></button>
       </form>
       {
-        list.length === 0 && <EmptyData message='No hay elementos en la lista' />
+        notes.length === 0 && <EmptyData message='No hay elementos en la lista' />
       }
       {
-        list.map((item, index) => (
-          <div className='text-dark bg-light list mx-3 mt-2 px-2 d-flex justify-content-between' key={index} id={`${index}`} >
-            {item}
+        notes.map((item, index) => (
+          <div className='text-dark bg-light list mx-3 mt-2 px-2 d-flex justify-content-between' key={item.id} id={item.id} >
+            {item.title}
             <div>
               <DeleteIcon className="icon ms-3 me-2" onClick={() => handleDelete(index)} />
-              <CloseIcon className='icon' onClick={() => handleTacharEnIngles(index)} />
+              <CloseIcon className='icon' onClick={() => handleTacharEnIngles(item.id)} />
             </div>
           </div>
         ))
