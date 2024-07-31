@@ -17,7 +17,6 @@ function List() {
   const [description, setDescription] = useState<string>('')
 
   useEffect(() => {
-    localStorage.removeItem('notes')
     const list = localStorage.getItem('notes')
     if (list) {
       setNotes(JSON.parse(list))
