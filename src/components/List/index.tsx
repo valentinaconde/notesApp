@@ -4,16 +4,21 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import './list.css'
 import EmptyData from '../EmptyData';
-import{ ConfirmAlert,  WarningAlert } from '../../services/SwalService';
+import { ConfirmAlert, EditAlert, WarningAlert } from '../../services/SwalService';
 import { Note } from '../../types/Note';
 import { v4 as uuidv4 } from 'uuid';
+import CardContent from '@mui/material/CardContent';
+import { CardActions, Typography } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
 function List() {
   const [notes, setNotes] = useState<Note[]>([])
-  const [value, setValue] = useState<string>('')
+  const [title, setTitle] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
 
   useEffect(() => {
-    const list = localStorage.getItem('list')
+    localStorage.removeItem('notes')
+    const list = localStorage.getItem('notes')
     if (list) {
       setNotes(JSON.parse(list))
     }
@@ -21,30 +26,32 @@ function List() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event?.preventDefault()
-    if (!value) return
+    if (!title) return
 
     const note = {
       id: uuidv4(),
-      title: value
+      title,
+      description
     }
 
     setNotes([...notes, note])
     localStorage.setItem('notes', JSON.stringify([...notes, note]))
-    setValue('')
+    setTitle('')
+    setDescription('')
   }
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value)
+  const handleChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value)
+  }
+
+  const handleChangeDescription = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription(event.target.value)
   }
 
   const handleDelete = (index: number) => {
     const newList = notes.filter((item, i) => i !== index)
     setNotes(newList)
-    localStorage.setItem('list', JSON.stringify(newList))
-  }
-
-  const handleTacharEnIngles = (id: string) => {
-    document.getElementById(id)?.classList.add('tachado')
+    localStorage.setItem('notes', JSON.stringify(newList))
   }
 
   const handleDeleteAll = () => {
@@ -53,39 +60,104 @@ function List() {
     const confirmTitle = "Deleted!"
     const confirmText = "Your list has been deleted."
 
-    WarningAlert(warningTitle,warningText).then((result) => {
-     if (result.isConfirmed) {
-      setNotes([])
-       localStorage.removeItem('list')
-       ConfirmAlert(confirmTitle, confirmText)
-     }
+    WarningAlert(warningTitle, warningText).then((result) => {
+      if (result.isConfirmed) {
+        setNotes([])
+        localStorage.removeItem('notes')
+        ConfirmAlert(confirmTitle, confirmText)
+      }
     })
   }
 
+  const handleEdit = (id: string) => {
+    const note = notes.find((item) => item.id === id)
+
+    if (!note) return
+
+    const editTitle = "Edit the title"
+    const editDescription = "Edit the description"
+    let newItem: Note
+    EditAlert(editTitle).then((result) => {
+      if (result.isConfirmed) {
+        const newTitle = result.value.newText
+
+        newItem = {
+          ...note,
+          title: newTitle
+        }
+      }
+    }).finally(() => {
+      EditAlert(editDescription).then((result) => {
+        if (result.isConfirmed) {
+          const newDescription = result.value.newText
+          newItem = {
+            ...newItem || note,
+            description: newDescription
+          }
+        }
+        const newList = notes.map((item) => item.id === id ? newItem : item)
+        setNotes(newList)
+        localStorage.setItem('notes', JSON.stringify(newList))
+      })
+    })
+
+
+  }
+
+
   return (
-    <>
+    <div className='d-flex flex-column align-items-center'>
       <form className='d-flex mb-3 list mt-5 ms-3' onSubmit={handleSubmit}>
-        <input className='form-control' type="text" value={value} onChange={handleChange}></input>
+        <div>
+          <input className='form-control' type="text" placeholder="Agregue un titulo" value={title} onChange={handleChangeTitle}></input>
+          <input className='form-control mt-2' type="text" placeholder="Agregue una descripcion" value={description} onChange={handleChangeDescription}></input>
+        </div>
         <button className='btn btn-success ms-2 d-none d-md-block'>SUBMIT</button>
-        <button className='btn btn-success ms-2 d-md-none d-block'><CheckIcon/></button>
+        <button className='btn btn-success ms-2 d-md-none d-block'><CheckIcon /></button>
         <button className='btn btn-danger mx-2 d-none d-md-block' onClick={handleDeleteAll}>CLEAR</button>
-        <button className='btn btn-danger mx-2 d-md-none d-block' onClick={handleDeleteAll}><CloseIcon/></button>
+        <button className='btn btn-danger mx-2 d-md-none d-block' onClick={handleDeleteAll}><CloseIcon /></button>
       </form>
       {
         notes.length === 0 && <EmptyData message='No hay elementos en la lista' />
       }
       {
         notes.map((item, index) => (
-          <div className='text-dark bg-light list mx-3 mt-2 px-2 d-flex justify-content-between' key={item.id} id={item.id} >
-            {item.title}
-            <div>
+
+          <div className='d-flex flex-column justify-content-center align-items-center mt-3'>
+            <CardContent className='bg-light card-styles text-center'  >
+
+              <Typography variant="h6" component="div" className='fw-bold text-uppercase '>
+                {item.title}
+              </Typography>
+
+              <Typography variant="body2" className='mt-2'>
+                {item.description}
+              </Typography>
+            </CardContent>
+            <CardActions className='bg-light card-styles d-flex justify-content-center'>
               <DeleteIcon className="icon ms-3 me-2" onClick={() => handleDelete(index)} />
-              <CloseIcon className='icon' onClick={() => handleTacharEnIngles(item.id)} />
-            </div>
+              <EditIcon className='icon' onClick={() => handleEdit(item.id)} />
+            </CardActions>
+
           </div>
+
+
+
+
+
+
+
+
+          // <div className='text-dark bg-light list mx-3 mt-2 px-2 d-flex justify-content-between' key={item.id} id={item.id} >
+          //   {item.title}
+          //   <div>
+          //     <DeleteIcon className="icon ms-3 me-2" onClick={() => handleDelete(index)} />
+          //     <CloseIcon className='icon' onClick={() => handleTacharEnIngles(item.id)} />
+          //   </div>
+          // </div>
         ))
       }
-    </>
+    </div>
   )
 }
 
