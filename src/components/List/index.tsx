@@ -3,8 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import './list.css'
 import EmptyData from '../EmptyData';
-import{ ConfirmAlert,  DeletedAlert } from '../../services/SwalService';
-import { Delete } from '@mui/icons-material';
+import{ ConfirmAlert,  WarningAlert } from '../../services/SwalService';
 
 function List() {
   const [list, setList] = useState<string[]>([])
@@ -40,16 +39,20 @@ function List() {
   }
 
   const handleDeleteAll = () => {
-    ConfirmAlert().then((result) => {
+    const warningTitle = "Are you sure?"
+    const warningText = "You won't be able to revert this!"
+    const confirmTitle = "Deleted!"
+    const confirmText = "Your list has been deleted."
+
+    WarningAlert(warningTitle,warningText).then((result) => {
      if (result.isConfirmed) {
        setList([])
        localStorage.removeItem('list')
-       DeletedAlert()
+       ConfirmAlert(confirmTitle, confirmText)
      }
     })
-    
-
   }
+
   return (
     <>
       <form className='d-flex mb-3 list mt-5 ms-3' onSubmit={handleSubmit}>
