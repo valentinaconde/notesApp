@@ -4,9 +4,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import './list.css'
 import EmptyData from '../EmptyData';
 import{ ConfirmAlert,  WarningAlert } from '../../services/SwalService';
+import { Note } from '../../types/Note';
+import { v4 as uuidv4 } from 'uuid';
 
 function List() {
-  const [list, setList] = useState<string[]>([])
+  const [list, setList] = useState<Note[]>([])
   const [value, setValue] = useState<string>('')
 
   useEffect(() => {
@@ -19,8 +21,14 @@ function List() {
   const handleSubmit = (event: any) => {
     event?.preventDefault()
     if (!value) return
-    setList([...list, value])
-    localStorage.setItem('list', JSON.stringify([...list, value]))
+
+    const note = {
+      id: uuidv4(),
+      title: value
+    }
+
+    setList([...list, note])
+    localStorage.setItem('list', JSON.stringify([...list, note]))
     setValue('')
   }
 
@@ -66,7 +74,7 @@ function List() {
       {
         list.map((item, index) => (
           <div className='text-dark bg-light list ms-3 mt-2 ps-2 d-flex justify-content-between' key={index} id={`${index}`} >
-            {item}
+            {item.title}
             <div>
               <DeleteIcon className="icon ms-3 me-2" onClick={() => handleDelete(index)} />
               <CloseIcon className='icon' onClick={() => handleTacharEnIngles(index)} />
